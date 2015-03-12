@@ -7,6 +7,10 @@
 //
 
 #import "WordLadder.h"
+#define NEXT_WORD_IDX 0
+#define IS_IN_RESULT_ARR 1
+#define NOT_IN_RESULT_ARR 0
+#define IN_RESULT_ARR 1
 
 @implementation WordLadder
 @synthesize start, end, dict, resultArr;
@@ -25,40 +29,90 @@
 
 - (NSArray *)work{
     NSMutableDictionary * changeAvailableWordsDict = [[NSMutableDictionary alloc]init];
+    NSMutableDictionary * wordStatusDict = [[NSMutableDictionary alloc]init];
     NSMutableArray * resultBuffer = [[NSMutableArray alloc]init];
     NSMutableArray * tmpResult = [[NSMutableArray alloc]init];
-    NSString * curWord = [self start];
     NSMutableArray * changeAvailableWordsArr;
+    NSMutableArray * wordStatus;
+    NSNumber * nextWordIdx;
+    NSUInteger minLengthResult = [[self dict] count] + 2;
     
-    while(![curWord isEqualToString:[self end]]){
+    NSString * curWord = [self start];
+    [changeAvailableWordsDict setObject:[self getChangeAvailableWordsList:curWord] forKey:curWord];
+    [wordStatusDict setObject:[NSMutableArray arrayWithObjects:[NSNumber numberWithInt:0],[NSNumber numberWithInt:IN_RESULT_ARR], nil] forKey:curWord];
+    
+    [resultBuffer addObject:curWord];
+    wordStatus = [wordStatusDict objectForKey:curWord];
+    nextWordIdx = [wordStatus objectAtIndex:NEXT_WORD_IDX];
+    [wordStatus setObject:[NSNumber numberWithInt:[nextWordIdx intValue]+1] atIndexedSubscript:NEXT_WORD_IDX];
+    curWord = [[changeAvailableWordsDict objectForKey:curWord] objectAtIndex:[nextWordIdx intValue]];
+
+    while([resultBuffer count] != 0){
         if(![changeAvailableWordsDict objectForKey:curWord]){
             changeAvailableWordsArr = [self getChangeAvailableWordsList:curWord];
-            [changeAvailableWordsArr addObject:[NSNumber numberWithInt:-1]];
-            [changeAvailableWordsArr addObject:[NSNumber numberWithInt:0]];
             [changeAvailableWordsDict setObject:changeAvailableWordsArr forKey:curWord];
+            [wordStatusDict setObject:[NSMutableArray arrayWithObjects:[NSNumber numberWithInt:0],[NSNumber numberWithInt:NOT_IN_RESULT_ARR], nil] forKey:curWord];
         }
+        
         changeAvailableWordsArr = [changeAvailableWordsDict objectForKey:curWord];
-        NSNumber * idx = [changeAvailableWordsArr objectAtIndex:[changeAvailableWordsArr count]-2];
-        idx = [NSNumber numberWithInt:[idx intValue] + 1];
-        if([changeAvailableWordsArr lastObject] == [NSNumber numberWithInt:1] ||
-           [idx intValue] >= [changeAvailableWordsArr count]-2){
+        wordStatus = [wordStatusDict objectForKey:curWord];
+        nextWordIdx = [wordStatus objectAtIndex:NEXT_WORD_IDX];
+        
+        if([[wordStatus objectAtIndex:IS_IN_RESULT_ARR] intValue] == IN_RESULT_ARR){
             curWord = [resultBuffer lastObject];
-            [changeAvailableWordsArr setObject:idx atIndexedSubscript:[changeAvailableWordsArr count]-2];
+            [resultBuffer removeObject:curWord];
+            wordStatus = [wordStatusDict objectForKey:curWord];
+            [wordStatus setObject:[NSNumber numberWithInt:NOT_IN_RESULT_ARR] atIndexedSubscript:IS_IN_RESULT_ARR];
             continue;
         }
+        if ([nextWordIdx intValue] >= [changeAvailableWordsArr count]) {
+            wordStatus = [wordStatusDict objectForKey:curWord];
+            [wordStatus setObject:[NSNumber numberWithInt:NOT_IN_RESULT_ARR] atIndexedSubscript:IS_IN_RESULT_ARR];
+            [wordStatus setObject:[NSNumber numberWithInt:0] atIndexedSubscript:NEXT_WORD_IDX];
+            
+            curWord = [resultBuffer lastObject];
+            [resultBuffer removeObject:curWord];
+            wordStatus = [wordStatusDict objectForKey:curWord];
+            [wordStatus setObject:[NSNumber numberWithInt:NOT_IN_RESULT_ARR] atIndexedSubscript:IS_IN_RESULT_ARR];
+            continue;
+        }
+        if([curWord isEqualToString:@"lot"]){
+            NSLog(@":");
+        }
+        [wordStatus setObject:[NSNumber numberWithInt:[nextWordIdx intValue]+1] atIndexedSubscript:NEXT_WORD_IDX];
+        [wordStatus setObject:[NSNumber numberWithInt:IN_RESULT_ARR] atIndexedSubscript:IS_IN_RESULT_ARR];
         [resultBuffer addObject:curWord];
-        curWord = [changeAvailableWordsArr objectAtIndex:[idx intValue]];
-        [changeAvailableWordsArr setObject:idx atIndexedSubscript:[changeAvailableWordsArr count]-2];
-        [changeAvailableWordsArr setObject:[NSNumber numberWithInt:1] atIndexedSubscript:[changeAvailableWordsArr count]-1];
+        curWord = [changeAvailableWordsArr objectAtIndex:[nextWordIdx intValue]];
         if([self countDifferentCharacter:curWord cmpStr:[self end]] == 1){
             [resultBuffer addObject:curWord];
-            curWord = [self end];
+            [resultBuffer addObject:[self end]];
+            if([resultBuffer count] <= minLengthResult){
+                if([resultBuffer count] < minLengthResult){
+                    minLengthResult = [resultBuffer count];
+                    [tmpResult removeAllObjects];
+                }
+                [tmpResult addObject:resultBuffer];
+            }
+            resultBuffer = [[NSMutableArray alloc]initWithArray:resultBuffer];
+            //end단어 삭제
+            [resultBuffer removeObject:[resultBuffer lastObject]];
+
+            curWord = [resultBuffer lastObject];
+            wordStatus = [wordStatusDict objectForKey:curWord];
+            [wordStatus setObject:[NSNumber numberWithInt:NOT_IN_RESULT_ARR] atIndexedSubscript:IS_IN_RESULT_ARR];
+            [wordStatus setObject:[NSNumber numberWithInt:0] atIndexedSubscript:NEXT_WORD_IDX];
+            [resultBuffer removeObject:curWord];
+            
+            curWord = [resultBuffer lastObject];
+            wordStatus = [wordStatusDict objectForKey:curWord];
+            [wordStatus setObject:[NSNumber numberWithInt:NOT_IN_RESULT_ARR] atIndexedSubscript:IS_IN_RESULT_ARR];
+            [resultBuffer removeObject:curWord];
+            
         }
     }
-    [tmpResult addObject:resultBuffer];
     
-    [self setResultArr:tmpResult];
-    return [self resultArr];
+   
+    return tmpResult;
 }
 
 - (NSMutableArray *)getChangeAvailableWordsList:(NSString *)word{

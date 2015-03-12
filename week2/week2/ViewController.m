@@ -45,11 +45,11 @@
     NSLog(@"번호로 정렬된 결과입니다");
     NSLog(@"%@",[personModel sortedByNumber]);
 
-//
-//    //플러스 미션 : 아직 덜 했습니다.
-//    WordLadder * wl = [[WordLadder alloc] initWithStartEndWord:@"hit" inputEnd:@"cog" inputDict:[NSArray arrayWithObjects:@"hot",@"dot",@"dog", @"lot",@"log", nil]];
-//    NSArray * result = [wl getResult];
-//    NSLog(@"%@",result);
+
+    //플러스 미션 : 다 했습니다.
+    WordLadder * wl = [[WordLadder alloc] initWithStartEndWord:@"hit" inputEnd:@"cog" inputDict:[NSArray arrayWithObjects:@"hot",@"dot",@"dog", @"lot",@"log", nil]];
+    NSArray * result = [wl getResult];
+    NSLog(@"%@",result);
 }
 
 - (void)didReceiveMemoryWarning {
