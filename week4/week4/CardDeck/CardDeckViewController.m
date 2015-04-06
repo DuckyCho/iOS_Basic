@@ -54,22 +54,26 @@
 }
 
 - (void)cardNumToCardImageName:(NSNotification *)noti{
-    int cardNum = [[noti.userInfo objectForKey:@"cardNum"] intValue];
-    NSNumber * cardType = [[NSNumber alloc]initWithInt: cardNum / 13];
-    NSNumber * cardOrder = [[NSNumber alloc]initWithInt: cardNum % 13];
-    NSString * cardOrderStr = [cardOrdermap objectForKey:cardOrder];
-    if(!cardOrderStr){
-        cardOrderStr = [NSString stringWithFormat:@"%d",[cardOrder intValue]+1];
+    @autoreleasepool {
+        int cardNum = [[noti.userInfo objectForKey:@"cardNum"] intValue];
+        NSNumber * cardType = [[NSNumber alloc]initWithInt: cardNum / 13];
+        NSNumber * cardOrder = [[NSNumber alloc]initWithInt: cardNum % 13];
+        NSString * cardOrderStr = [cardOrdermap objectForKey:cardOrder];
+        if(!cardOrderStr){
+            cardOrderStr = [NSString stringWithFormat:@"%d",[cardOrder intValue]+1];
+        }
+        NSLog(@"cardNum : %d",cardNum);
+        NSLog(@"cardType : %d, cardOrder : %d",[cardType intValue], [cardOrder intValue]);
+        __weak NSString * imgName = [NSString stringWithFormat:@"%@%@",[cardTypeMap objectForKey:cardType],cardOrderStr];
+        [self changeCardImage:imgName];
     }
-    NSLog(@"cardNum : %d",cardNum);
-    NSLog(@"cardType : %d, cardOrder : %d",[cardType intValue], [cardOrder intValue]);
-    NSString * imgName = [NSString stringWithFormat:@"%@%@.png",[cardTypeMap objectForKey:cardType],cardOrderStr];
-    [self changeCardImage:imgName];
 }
 -(void)changeCardImage:(NSString *)cardName{
-    UIImage * cardImg = [UIImage imageNamed:cardName];
-    [[self cardImageView] setImage:cardImg];
-    [self cardPickMotion];
+    @autoreleasepool {
+        UIImage * cardImg = [[UIImage alloc]initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:cardName ofType:@"png"]];
+        [[self cardImageView] setImage:cardImg];
+        [self cardPickMotion];
+    }
 }
 
 
