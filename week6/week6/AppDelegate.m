@@ -1,8 +1,8 @@
 //
 //  AppDelegate.m
-//  week5
+//  week6
 //
-//  Created by Ducky on 2015. 4. 1..
+//  Created by Ducky on 2015. 4. 8..
 //  Copyright (c) 2015년 DuckyCho. All rights reserved.
 //
 
@@ -26,7 +26,6 @@
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    NSLog(@"Did enter background");
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 }

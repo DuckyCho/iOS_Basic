@@ -652,6 +652,7 @@
 				5CAE51DF1ACBB30700C2C9FA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5CAE51E01ACBB30700C2C9FA /* Build configuration list for PBXNativeTarget "week5Tests" */ = {
 			isa = XCConfigurationList;
@@ -660,6 +661,7 @@
 				5CAE51E21ACBB30700C2C9FA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
