@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5C19C8EB1ADE1C5100EB5AD1"
-               BuildableName = "Midterm.app"
+               BuildableName = "MidtermProject.app"
                BlueprintName = "MidtermProject"
                ReferencedContainer = "container:MidtermProject.xcodeproj">
             </BuildableReference>
@@ -29,7 +29,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5C19C9041ADE1C5100EB5AD1"
-               BuildableName = "MidtermTests.xctest"
+               BuildableName = "MidtermProjectTests.xctest"
                BlueprintName = "MidtermProjectTests"
                ReferencedContainer = "container:MidtermProject.xcodeproj">
             </BuildableReference>
@@ -47,7 +47,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5C19C9041ADE1C5100EB5AD1"
-               BuildableName = "MidtermTests.xctest"
+               BuildableName = "MidtermProjectTests.xctest"
                BlueprintName = "MidtermProjectTests"
                ReferencedContainer = "container:MidtermProject.xcodeproj">
             </BuildableReference>
@@ -57,7 +57,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5C19C8EB1ADE1C5100EB5AD1"
-            BuildableName = "Midterm.app"
+            BuildableName = "MidtermProject.app"
             BlueprintName = "MidtermProject"
             ReferencedContainer = "container:MidtermProject.xcodeproj">
          </BuildableReference>
@@ -77,7 +77,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5C19C8EB1ADE1C5100EB5AD1"
-            BuildableName = "Midterm.app"
+            BuildableName = "MidtermProject.app"
             BlueprintName = "MidtermProject"
             ReferencedContainer = "container:MidtermProject.xcodeproj">
          </BuildableReference>
@@ -96,7 +96,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5C19C8EB1ADE1C5100EB5AD1"
-            BuildableName = "Midterm.app"
+            BuildableName = "MidtermProject.app"
             BlueprintName = "MidtermProject"
             ReferencedContainer = "container:MidtermProject.xcodeproj">
          </BuildableReference>

@@ -13,8 +13,11 @@
 @property (nonatomic) char * _defaultData;
 @property (nonatomic) NSArray * _data;
 
+@property (nonatomic) NSMutableArray * _sectionNames;
+
 - (id)initWithDefaultData;
 - (NSDictionary *)getData:(NSInteger)row;
 - (void)resetData;
 - (void)deleteData:(NSInteger)idx;
+- (NSString *)getSectionName:(NSInteger)section;
 @end

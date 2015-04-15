@@ -14,10 +14,10 @@
 
 @implementation YDAlbumTableViewController
 
-@synthesize _albumModel, _numberOfSectionsInTableView, _numberOfRowsInSection;
+@synthesize _albumModel, _numberOfSectionsInTableView, _numberOfRowsInSection, _isSorted, _rowSectionMap;
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    [self set_isSorted:NO];
     [self registerNotificationObserver];
     [self set_albumModel:[[YDAlbumModel alloc]initWithDefaultData]];
     self.navigationItem.title = @"Album";
@@ -50,8 +50,16 @@
 
 - (void)tableViewReload:(NSNotification *)noti{
     NSDictionary * userInfo  = noti.userInfo;
-    [self set_numberOfSectionsInTableView:[[userInfo objectForKey:@"numberOfSectionsInTableView"] integerValue]];
-    [self set_numberOfRowsInSection:[[userInfo objectForKey:@"numberOfRowsInSection"] integerValue]];
+    if(![userInfo objectForKey:@"sectionRowMap"]){
+        [self set_isSorted:NO];
+        [self set_numberOfSectionsInTableView:[[userInfo objectForKey:@"numberOfSectionsInTableView"] integerValue]];
+        [self set_numberOfRowsInSection:[[userInfo objectForKey:@"numberOfRowsInSection"] integerValue]];
+    }
+    else{
+        [self set_isSorted:YES];
+        [self set_numberOfSectionsInTableView:[[userInfo objectForKey:@"numberOfSectionsInTableView"] integerValue]];
+        [self set_rowSectionMap:[NSMutableDictionary dictionaryWithDictionary:[userInfo objectForKey:@"sectionRowMap"]]];
+    }
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     [self.tableView reloadData];
@@ -80,9 +88,30 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [self _numberOfRowsInSection];
+    if(![self _isSorted])
+        return [self _numberOfRowsInSection];
+    else{
+        return [[[self _rowSectionMap] objectForKey:[NSNumber numberWithInteger:section]] integerValue];
+    }
 }
 
+
+-  (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
+    if([self _isSorted]){
+        return [[self _albumModel] getSectionName:section];
+    }
+    else
+        return nil;
+
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    if([self _isSorted]){
+        return 17;
+    }
+    else
+        return 0;
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     YDTableViewCell * tableViewCell;
@@ -90,8 +119,23 @@
     if([cell isKindOfClass:[YDTableViewCell class]]){
         tableViewCell = (YDTableViewCell *)cell;
     }
-    NSInteger row = indexPath.row;
-    NSDictionary * data = [[self _albumModel] getData:row];
+    NSInteger row;
+    NSDictionary * data;
+    if(![self _isSorted]){
+    row = indexPath.row;
+    data = [[self _albumModel] getData:row];
+    }
+    else{
+        NSInteger prevSecionCount;
+        if(indexPath.section == 0){
+            prevSecionCount = [[[self _rowSectionMap] objectForKey:[NSNumber numberWithInteger:indexPath.section]] integerValue];
+        }
+        else{
+            prevSecionCount = [[[self _rowSectionMap] objectForKey:[NSNumber numberWithInteger:indexPath.section-1]] integerValue];
+        }
+        row = indexPath.section * prevSecionCount + indexPath.row;
+        data = [[self _albumModel] getData:row];
+    }
     [tableViewCell removeAllSubviews];
     [tableViewCell setData:data];
     return cell;
@@ -104,9 +148,25 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
     if(editingStyle == UITableViewCellEditingStyleDelete){
         NSInteger row = indexPath.row;
-        [[self _albumModel] deleteData:row];
-        [self set_numberOfRowsInSection:[self _numberOfRowsInSection]-1];
-        [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        if(![self _isSorted]){
+            [[self _albumModel] deleteData:row];
+            [self set_numberOfRowsInSection:[self _numberOfRowsInSection]-1];
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        }
+        else{
+            NSInteger prevSecionCount;
+            if(indexPath.section == 0){
+                prevSecionCount = [[[self _rowSectionMap] objectForKey:[NSNumber numberWithInteger:indexPath.section]] integerValue];
+            }
+            else{
+                prevSecionCount = [[[self _rowSectionMap] objectForKey:[NSNumber numberWithInteger:indexPath.section-1]] integerValue];
+            }
+            row = indexPath.section * prevSecionCount + indexPath.row;
+            [[self _albumModel] deleteData:row];
+            NSInteger newRowNum = [[[self _rowSectionMap] objectForKey:[NSNumber numberWithInteger:indexPath.section]] integerValue] -1 ;
+            [[self _rowSectionMap] setObject:[NSNumber numberWithInteger:newRowNum] forKey:[NSNumber numberWithInteger:indexPath.section]];
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        }
     }
 }
 

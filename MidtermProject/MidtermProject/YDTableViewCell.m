@@ -26,15 +26,45 @@
     [self _title].text = [data objectForKey:@"title"];
     [[self _title] setFont:[UIFont fontWithName:@"HelveticaNeue" size:17]];
     [self _title].translatesAutoresizingMaskIntoConstraints = NO;
-
-
     [[self _detail] setTextColor:[UIColor grayColor]];
     [self _detail].text = [data objectForKey:@"date"];
     [[self _detail] setFont:[UIFont fontWithName:@"HelveticaNeueLight" size:10]];
     [self _detail].translatesAutoresizingMaskIntoConstraints = NO;
     self.clipsToBounds =YES;
+    self.backgroundView.clipsToBounds=YES;
     [self setBackgroundView:[[UIImageView alloc] initWithImage:[UIImage imageNamed:[data objectForKey:@"image"]]]];
     [self backgroundView].contentMode = UIViewContentModeScaleAspectFill;
+    self.backgroundView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.backgroundView
+                                                     attribute:NSLayoutAttributeWidth
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:self
+                                                     attribute:NSLayoutAttributeWidth
+                                                    multiplier:1.0
+                                                      constant:0.0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.backgroundView
+                                                     attribute:NSLayoutAttributeHeight
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:self
+                                                     attribute:NSLayoutAttributeHeight
+                                                    multiplier:1.0
+                                                      constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.backgroundView
+                                                     attribute:NSLayoutAttributeCenterX
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:self
+                                                     attribute:NSLayoutAttributeCenterX
+                                                    multiplier:1.0
+                                                      constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.backgroundView
+                                                     attribute:NSLayoutAttributeCenterY
+                                                     relatedBy:NSLayoutRelationEqual
+                                                        toItem:self
+                                                     attribute:NSLayoutAttributeCenterY
+                                                    multiplier:1.0
+                                                      constant:0]];
+    
+
     [self addSubview:[self _title]];
     [self addSubview:[self _detail]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:[self _title]

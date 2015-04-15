@@ -16,4 +16,7 @@
 @property (nonatomic) YDAlbumModel * _albumModel;
 @property (nonatomic) NSInteger _numberOfSectionsInTableView;
 @property (nonatomic) NSInteger _numberOfRowsInSection;
+@property (nonatomic) BOOL _isSorted;
+@property (nonatomic) NSMutableDictionary * _rowSectionMap;
+
 @end

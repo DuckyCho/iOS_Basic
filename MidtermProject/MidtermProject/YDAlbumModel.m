@@ -35,6 +35,7 @@
 }
 
 - (void)sortData:(NSNotification *)noti{
+        [self set_sectionNames:[[NSMutableArray alloc] init]];
         NSArray * sortedArray = [[self _data] sortedArrayUsingComparator:^(id obj1, id obj2) {
             NSString * obj1Date = [(NSDictionary *)obj1 objectForKey:@"date"];
             NSString * obj2Date = [(NSDictionary *)obj2 objectForKey:@"date"];
@@ -42,11 +43,32 @@
             [formatter setDateFormat:@"yyyyMMdd"];
             return [[formatter dateFromString:obj1Date] compare:[formatter dateFromString:obj2Date]];
         }];
-    
+    NSRange yearRange = NSMakeRange(0, 4);
+    NSInteger section = 0;
+    NSInteger row = 0;
+    NSMutableDictionary * sectionRowMap = [[NSMutableDictionary alloc] init];
+    NSString * prevDateYear = [[[sortedArray firstObject] objectForKey:@"date"] substringWithRange:yearRange];
+    NSString * curDateYear;
+    for(id obj in sortedArray){
+        curDateYear = [[(NSDictionary *)obj objectForKey:@"date"] substringWithRange:yearRange];
+        if(![prevDateYear isEqualToString:curDateYear]){
+            [sectionRowMap setObject:[NSNumber numberWithInteger:row] forKey:[NSNumber numberWithInteger:section]];
+            [[self _sectionNames] addObject:prevDateYear];
+            section = section + 1;
+            row = 1;
+        }
+        else{
+            row = row + 1;
+        }
+        prevDateYear = curDateYear;
+    }
+    [sectionRowMap setObject:[NSNumber numberWithInteger:row] forKey:[NSNumber numberWithInteger:section]];
+    [[self _sectionNames] addObject:curDateYear];
     [self set_data:sortedArray];
     NSMutableDictionary * userInfo = [[NSMutableDictionary alloc] init];
-    [userInfo setObject:[NSNumber numberWithInt:1] forKey:@"numberOfSectionsInTableView"];
+    [userInfo setObject:[NSNumber numberWithInteger:[sectionRowMap count]] forKey:@"numberOfSectionsInTableView"];
     [userInfo setObject:[NSNumber numberWithInteger:[sortedArray count]] forKey:@"numberOfRowsInSection"];
+    [userInfo setObject:sectionRowMap forKey:@"sectionRowMap"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"dataReady" object:nil userInfo:userInfo];
 }
 
@@ -76,6 +98,11 @@
     NSMutableArray * newData = [[NSMutableArray alloc]initWithArray:[self _data]];
     [newData removeObjectAtIndex:idx];
     [self set_data:newData];
+    
+}
+
+- (NSString *)getSectionName:(NSInteger)section{
+    return [[self _sectionNames] objectAtIndex:section];
     
 }
 
